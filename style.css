@@ -253,7 +253,7 @@ button:active {
             padding: 0.5rem;
             border-bottom: 1px solid #eee;
         }
-        @media (max-width: 768px) {
+        @media (max-width: 1025px) {
             .controls {
                 flex-direction: column;
                 align-items: center;
