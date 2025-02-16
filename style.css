@@ -121,6 +121,7 @@ button:active {
     position: relative;
     overflow: hidden;
     transition: all var(--transition-speed);
+    overflow: auto;
 }
 
 .node {
@@ -251,4 +252,23 @@ button:active {
             margin: 0.25rem 0;
             padding: 0.5rem;
             border-bottom: 1px solid #eee;
+        }
+        @media (max-width: 768px) {
+            .controls {
+                flex-direction: column;
+                align-items: center;
+            }
+        
+            .control-group {
+                flex-direction: column;
+                width: 100%;
+            }
+        
+            input {
+                width: 100%;
+            }
+        
+            button {
+                width: 100%;
+            }
         }
