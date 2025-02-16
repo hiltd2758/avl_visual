@@ -10,25 +10,35 @@
 <body>
     <div class="container">
         <div class="header">
-            <h1>AVL Tree Visualization</h1>
+            <h1>Mô phỏng cây AVL</h1>
         </div>
 
         <div class="controls">
-            <div class="input-group">
-                <input type="number" id="nodeValue" placeholder="Enter value">
+            <div class="control-group">
+                <input type="number" id="nodeValue" placeholder="Nhập giá trị">
                 <button class="btn-add" onclick="addNode()">
-                    <i class="fas fa-plus"></i> Add
+                    <i class="fas fa-plus"></i> Thêm
                 </button>
                 <button class="btn-delete" onclick="deleteNode()">
-                    <i class="fas fa-trash"></i> Delete
+                    <i class="fas fa-trash"></i> Xóa
                 </button>
             </div>
-            <div class="input-group">
-                <input type="number" id="searchValue" placeholder="Search value">
+            <div class="control-group">
+                <input type="number" id="searchValue" placeholder="Tìm giá trị">
                 <button class="btn-search" onclick="searchNode()">
-                    <i class="fas fa-search"></i> Search
+                    <i class="fas fa-search"></i> Tìm
                 </button>
             </div>
+            <div class="control-group">
+                <button class="btn-reset" onclick="resetTree()">
+                    <i class="fas fa-sync"></i> Đặt lại
+                </button>
+            </div>
+        </div>
+
+        <div class="message-box">
+            <div class="message" id="balanceMessage"></div>
+            <div class="message-history" id="messageHistory"></div>
         </div>
 
         <div class="tree-container" id="tree-container"></div>
@@ -36,6 +46,6 @@
 
     <script src="script.js">
 
-    </script>
-</body>
+        </script>
+    </body>
 </html>

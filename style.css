@@ -172,18 +172,83 @@ button:active {
         box-shadow: 0 4px 8px rgba(244, 67, 54, 0.3);
     }
 }
+        .message-box {
+            background: #fff;
+            padding: 1rem;
+            border-radius: var(--border-radius);
+            margin: 1rem 0;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
 
-@media (max-width: 768px) {
-    .controls {
-        flex-direction: column;
-        align-items: stretch;
-    }
+        .message {
+            color: #666;
+            font-size: 0.9rem;
+        }
 
-    input[type="number"] {
-        width: 100%;
-    }
+        .controls {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+            padding: 1.5rem;
+        }
 
-    .tree-container {
-        height: 400px;
-    }
-}
+        .control-group {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .btn-random {
+            background: #9C27B0;
+            color: white;
+        }
+
+        .btn-reset {
+            background: #FF9800;
+            color: white;
+        }
+
+        .node {
+            animation: appear 0.5s ease-out;
+        }
+
+        @keyframes appear {
+            from {
+                transform: scale(0);
+                opacity: 0;
+            }
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        .node.moving {
+            transition: all 0.5s ease-out;
+        }
+
+        .branch.appearing {
+            animation: growLine 0.5s ease-out;
+        }
+
+        @keyframes growLine {
+            from {
+                width: 0;
+            }
+        }
+
+        .message-history {
+            max-height: 150px;
+            overflow-y: auto;
+            margin-top: 1rem;
+            padding: 0.5rem;
+            border: 1px solid #eee;
+            border-radius: var(--border-radius);
+        }
+
+        .message-history p {
+            margin: 0.25rem 0;
+            padding: 0.5rem;
+            border-bottom: 1px solid #eee;
+        }
