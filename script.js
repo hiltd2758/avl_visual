@@ -16,6 +16,7 @@ class AVLTree {
         this.levelSpacing = 80;
         this.horizontalSpacing = 50;
         this.messages = [];
+        this.animationDelay=2500;
     }
 
     addMessage(message) {
@@ -28,7 +29,9 @@ class AVLTree {
 
     updateMessages() {
         const messageHistory = document.getElementById('messageHistory');
-        messageHistory.innerHTML = this.messages.map(msg => `<p>${msg}</p>`).join('');
+        if (messageHistory) {
+            messageHistory.innerHTML = this.messages.map(msg => `<p>${msg}</p>`).join('');
+        }
     }
 
     getHeight(node) {
@@ -43,55 +46,138 @@ class AVLTree {
         return node ? this.getHeight(node.left) - this.getHeight(node.right) : 0;
     }
 
-    async insert(root, value) {
-        if (!root) {
+    async insert(value) {
+        this.root = await this._insert(this.root, value);
+        await this.renderTree(document.getElementById('tree-container'));
+    }
+
+    async _insert(node, value) {
+        if (!node) {
             this.addMessage(`Thêm nút mới với giá trị ${value}`);
             return new TreeNode(value);
         }
 
-        if (value < root.value) {
-            root.left = await this.insert(root.left, value);
-        } else if (value > root.value) {
-            root.right = await this.insert(root.right, value);
+        if (value < node.value) {
+            node.left = await this._insert(node.left, value);
+        } else if (value > node.value) {
+            node.right = await this._insert(node.right, value);
         } else {
             this.addMessage(`Giá trị ${value} đã tồn tại trong cây`);
-            return root;
+            return node;
         }
 
-        this.updateHeight(root);
-        let balance = this.getBalance(root);
+        this.updateHeight(node);
+        const balance = this.getBalance(node);
 
-        // Kiểm tra và cân bằng cây
-        if (balance > 1) {
-            if (value < root.left.value) {
-                this.addMessage(`Phát hiện lệch trái-trái tại nút ${root.value}. Thực hiện xoay phải.`);
-                return this.rotateRight(root);
-            }
-            if (value > root.left.value) {
-                this.addMessage(`Phát hiện lệch trái-phải tại nút ${root.value}. Thực hiện xoay kép LR.`);
-                root.left = this.rotateLeft(root.left);
-                return this.rotateRight(root);
-            }
+        if (balance > 1 && value < node.left.value) {
+            this.addMessage(`Phát hiện lệch trái-trái tại nút ${node.value}. Thực hiện xoay phải.`);
+            return this.rotateRight(node);
         }
 
-        if (balance < -1) {
-            if (value > root.right.value) {
-                this.addMessage(`Phát hiện lệch phải-phải tại nút ${root.value}. Thực hiện xoay trái.`);
-                return this.rotateLeft(root);
-            }
-            if (value < root.right.value) {
-                this.addMessage(`Phát hiện lệch phải-trái tại nút ${root.value}. Thực hiện xoay kép RL.`);
-                root.right = this.rotateRight(root.right);
-                return this.rotateLeft(root);
-            }
+        if (balance < -1 && value > node.right.value) {
+            this.addMessage(`Phát hiện lệch phải-phải tại nút ${node.value}. Thực hiện xoay trái.`);
+            return this.rotateLeft(node);
         }
 
-        return root;
+        if (balance > 1 && value > node.left.value) {
+            this.addMessage(`Phát hiện lệch trái-phải tại nút ${node.value}. Thực hiện xoay kép LR.`);
+            node.isHighlighted = true;
+            await this.renderTree(document.getElementById('tree-container'));
+            await this.delay(1000);
+            
+            node.left = this.rotateLeft(node.left);
+            await this.renderTree(document.getElementById('tree-container'));
+            await this.delay(1000);
+            
+            return this.rotateRight(node);
+        }
+
+        if (balance < -1 && value < node.right.value) {
+            this.addMessage(`Phát hiện lệch phải-trái tại nút ${node.value}. Thực hiện xoay kép RL.`);
+            node.isHighlighted = true;
+            await this.renderTree(document.getElementById('tree-container'));
+            await this.delay(1000);
+            
+            node.right = this.rotateRight(node.right);
+            await this.renderTree(document.getElementById('tree-container'));
+            await this.delay(1000);
+            
+            return this.rotateLeft(node);
+        }
+
+        return node;
+    }
+    async delay() {
+        return new Promise(resolve => setTimeout(resolve, this.animationDelay));
+    }
+    async delete(value) {
+        this.root = await this._delete(this.root, value);
+        await this.renderTree(document.getElementById('tree-container'));
+    }
+
+    async _delete(node, value) {
+        if (!node) {
+            this.addMessage(`Không tìm thấy nút ${value} để xóa`);
+            return null;
+        }
+
+        if (value < node.value) {
+            node.left = await this._delete(node.left, value);
+        } else if (value > node.value) {
+            node.right = await this._delete(node.right, value);
+        } else {
+            this.addMessage(`Đã tìm thấy nút ${value} để xóa`);
+            
+            if (!node.left) {
+                return node.right;
+            } else if (!node.right) {
+                return node.left;
+            }
+
+            const minNode = this.getMinNode(node.right);
+            node.value = minNode.value;
+            node.right = await this._delete(node.right, minNode.value);
+        }
+
+        if (!node) return null;
+
+        this.updateHeight(node);
+
+        const balance = this.getBalance(node);
+
+
+        if (balance > 1 && this.getBalance(node.left) >= 0) {
+            return this.rotateRight(node);
+        }
+
+        if (balance > 1 && this.getBalance(node.left) < 0) {
+            node.left = this.rotateLeft(node.left);
+            return this.rotateRight(node);
+        }
+
+        if (balance < -1 && this.getBalance(node.right) <= 0) {
+            return this.rotateLeft(node);
+        }
+
+        if (balance < -1 && this.getBalance(node.right) > 0) {
+            node.right = this.rotateRight(node.right);
+            return this.rotateLeft(node);
+        }
+
+        return node;
+    }
+
+    getMinNode(node) {
+        let current = node;
+        while (current.left) {
+            current = current.left;
+        }
+        return current;
     }
 
     rotateRight(y) {
-        let x = y.left;
-        let T2 = x.right;
+        const x = y.left;
+        const T2 = x.right;
 
         x.right = y;
         y.left = T2;
@@ -103,8 +189,8 @@ class AVLTree {
     }
 
     rotateLeft(x) {
-        let y = x.right;
-        let T2 = y.left;
+        const y = x.right;
+        const T2 = y.left;
 
         y.left = x;
         x.right = T2;
@@ -115,83 +201,10 @@ class AVLTree {
         return y;
     }
 
-    delete(root, value) {
-        if (!root) {
-            this.addMessage(`Không tìm thấy nút ${value} để xóa`);
-            return null;
-        }
-
-        if (value < root.value) {
-            root.left = this.delete(root.left, value);
-        } else if (value > root.value) {
-            root.right = this.delete(root.right, value);
-        } else {
-            this.addMessage(`Đã xóa nút ${value}`);
-            if (!root.left || !root.right) {
-                let temp = root.left ? root.left : root.right;
-                if (!temp) {
-                    return null;
-                }
-                root = temp;
-            } else {
-                let temp = this.getMinNode(root.right);
-                root.value = temp.value;
-                root.right = this.delete(root.right, temp.value);
-            }
-        }
-
-        if (!root) return null;
-
-        this.updateHeight(root);
-        let balance = this.getBalance(root);
-
-        if (balance > 1) {
-            if (this.getBalance(root.left) >= 0) {
-                this.addMessage(`Cân bằng lại sau khi xóa: Xoay phải tại ${root.value}`);
-                return this.rotateRight(root);
-            }
-            this.addMessage(`Cân bằng lại sau khi xóa: Xoay kép LR tại ${root.value}`);
-            root.left = this.rotateLeft(root.left);
-            return this.rotateRight(root);
-        }
-
-        if (balance < -1) {
-            if (this.getBalance(root.right) <= 0) {
-                this.addMessage(`Cân bằng lại sau khi xóa: Xoay trái tại ${root.value}`);
-                return this.rotateLeft(root);
-            }
-            this.addMessage(`Cân bằng lại sau khi xóa: Xoay kép RL tại ${root.value}`);
-            root.right = this.rotateRight(root.right);
-            return this.rotateLeft(root);
-        }
-
-        return root;
-    }
-
-    getMinNode(node) {
-        let current = node;
-        while (current.left) {
-            current = current.left;
-        }
-        return current;
-    }
-
-    searchAndHighlight(root, value) {
-        if (!root) return false;
-
-        root.isHighlighted = false;
-        if (value === root.value) {
-            root.isHighlighted = true;
-            this.addMessage(`Tìm thấy nút ${value}`);
-            return true;
-        }
-
-        return this.searchAndHighlight(root.left, value) || 
-               this.searchAndHighlight(root.right, value);
-    }
-
     async renderTree(container) {
-        container.innerHTML = "";
+        if (!container) return;
+        
+        container.innerHTML = '';
         await this.positionNodes(this.root, window.innerWidth / 2, 60, 200);
         await this.drawNodes(this.root, container);
     }
@@ -210,23 +223,21 @@ class AVLTree {
         if (!node) return;
 
         if (node.left) {
-            const branch = document.createElement("div");
-            branch.className = "branch appearing";
-            branch.style.width = "0";
+            const branch = document.createElement('div');
+            branch.className = 'branch';
             this.drawBranch(node, node.left, branch);
             container.appendChild(branch);
         }
 
         if (node.right) {
-            const branch = document.createElement("div");
-            branch.className = "branch appearing";
-            branch.style.width = "0";
+            const branch = document.createElement('div');
+            branch.className = 'branch';
             this.drawBranch(node, node.right, branch);
             container.appendChild(branch);
         }
 
-        const nodeElem = document.createElement("div");
-        nodeElem.className = "node" + (node.isHighlighted ? " highlight" : "");
+        const nodeElem = document.createElement('div');
+        nodeElem.className = `node${node.isHighlighted ? ' highlight' : ''}`;
         nodeElem.textContent = node.value;
         nodeElem.style.left = `${node.x - 25}px`;
         nodeElem.style.top = `${node.y - 25}px`;
@@ -250,64 +261,34 @@ class AVLTree {
 }
 
 const avl = new AVLTree();
-const treeContainer = document.getElementById("tree-container");
 
 async function addNode() {
-    const value = parseInt(document.getElementById("nodeValue").value);
+    const input = document.getElementById('nodeValue');
+    const value = parseInt(input.value);
     if (!isNaN(value)) {
-        avl.root = await avl.insert(avl.root, value);
-        await avl.renderTree(treeContainer);
-        document.getElementById("nodeValue").value = "";
+        await avl.insert(value);
+        input.value = '';
     }
 }
 
 async function deleteNode() {
-    const value = parseInt(document.getElementById("nodeValue").value);
+    const input = document.getElementById('nodeValue');
+    const value = parseInt(input.value);
     if (!isNaN(value)) {
-        avl.root = avl.delete(avl.root, value);
-        await avl.renderTree(treeContainer);
-        document.getElementById("nodeValue").value = "";
+        await avl.delete(value);
+        input.value = '';
     }
 }
-
-function searchNode() {
-    const value = parseInt(document.getElementById("searchValue").value);
-    if (!isNaN(value)) {
-        const found = avl.searchAndHighlight(avl.root, value);
-        avl.renderTree(treeContainer);
-        if (!found) {
-            avl.addMessage(`Không tìm thấy nút ${value}`);
-        }
-        document.getElementById("searchValue").value = "";
-    }
-}
-
 
 function resetTree() {
     avl.root = null;
     avl.messages = [];
-    avl.addMessage("Đã xóa toàn bộ cây");
-    avl.renderTree(treeContainer);
+    avl.addMessage('Đã xóa toàn bộ cây');
+    avl.renderTree(document.getElementById('tree-container'));
 }
 
-// Thêm sự kiện nhấn Enter cho input
-document.getElementById("nodeValue").addEventListener("keypress", async function(event) {
-    if (event.key === "Enter") {
+document.getElementById('nodeValue').addEventListener('keypress', async function(event) {
+    if (event.key === 'Enter') {
         await addNode();
     }
 });
-
-document.getElementById("searchValue").addEventListener("keypress", function(event) {
-    if (event.key === "Enter") {
-        searchNode();
-    }
-});
-
-window.onload = function() {
-    avl.addMessage("Chào mừng đến với ứng dụng Mô phỏng Cây AVL!");
-    avl.addMessage("- Thêm nút mới bằng cách nhập số và nhấn 'Thêm'");
-    avl.addMessage("- Xóa nút bằng cách nhập số và nhấn 'Xóa'");
-    avl.addMessage("- Tìm kiếm nút bằng cách nhập số và nhấn 'Tìm'");
-    avl.addMessage("- Xóa toàn bộ cây bằng nút 'Đặt lại'");
-    avl.addMessage("Bạn có thể:");
-};
