@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AVL Tree Visualization</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>AVL Tree Visualization</h1>
+        </div>
+
+        <div class="controls">
+            <div class="input-group">
+                <input type="number" id="nodeValue" placeholder="Enter value">
+                <button class="btn-add" onclick="addNode()">
+                    <i class="fas fa-plus"></i> Add
+                </button>
+                <button class="btn-delete" onclick="deleteNode()">
+                    <i class="fas fa-trash"></i> Delete
+                </button>
+            </div>
+            <div class="input-group">
+                <input type="number" id="searchValue" placeholder="Search value">
+                <button class="btn-search" onclick="searchNode()">
+                    <i class="fas fa-search"></i> Search
+                </button>
+            </div>
+        </div>
+
+        <div class="tree-container" id="tree-container"></div>
+    </div>
+
+    <script src="script.js">
+
+    </script>
+</body>
+</html>
