@@ -18,7 +18,6 @@ class AVLTree {
         this.messages = [];
         this.animationDelay=2500;
     }
-
     addMessage(message) {
         this.messages.unshift(message);
         if (this.messages.length > 10) {
@@ -26,7 +25,6 @@ class AVLTree {
         }
         this.updateMessages();
     }
-
     updateMessages() {
         const messageHistory = document.getElementById('messageHistory');
         if (messageHistory) {
@@ -34,6 +32,7 @@ class AVLTree {
         }
     }
 
+/******  f6d93813-a81e-4196-8d19-265dbe7a3a24  *******/
     getHeight(node) {
         return node ? node.height : 0;
     }
