@@ -1,48 +1,54 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="vi">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AVL Tree Visualization</title>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <title>AVL</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div class="container">
-        <div class="header">
-            <h1>Mô phỏng cây AVL</h1>
-        </div>
-
+        <h1>MÔ PHỎNG CÂY AVL</h1>
+        
         <div class="controls">
-            <div class="control-group">
-                <input type="number" id="nodeValue" placeholder="Nhập giá trị">
-                <button class="btn-add" onclick="addNode()">
-                    <i class="fas fa-plus"></i> Thêm
-                </button>
-                <button class="btn-delete" onclick="deleteNode()">
-                    <i class="fas fa-trash"></i> Xóa
-                </button>
+            <div class="input-group">
+                <input type="number" id="nodeValue" placeholder="Giá trị">
+                <button onclick="addNode()">Thêm nút</button>
+                <button onclick="deleteNode()">Xóa nút</button>
+                <button onclick="searchNode()">Tìm kiếm</button>
             </div>
-
-            <div class="control-group">
-                <button class="btn-reset" onclick="resetTree()">
-                    <i class="fas fa-sync"></i> Đặt lại
-                </button>
+            
+            <div class="traverse-buttons">
+                <button onclick="inOrderTraversal()">In-order</button>
+                <button onclick="preOrderTraversal()">Pre-order</button>
+                <button onclick="postOrderTraversal()">Post-order</button>
             </div>
+            
+            <div class="speed-control">
+                <label for="speed">Tốc độ hiệu ứng:</label>
+                <input 
+                    type="range" 
+                    id="speed" 
+                    class="speed-slider" 
+                    min="300" 
+                    max="2700" 
+                    step="300" 
+                    value="1500"
+                    oninput="setAnimationSpeed(this.value)">
+                <span id="speedValue">1.5x</span>
+            </div>
+            
+            <button class="reset-button" onclick="resetTree()">Xóa cây</button>
         </div>
-
-        <div class="message-box">
-            <div class="message" id="balanceMessage"></div>
-            <div class="message-history" id="messageHistory"></div>
+        
+        <div id="tree-container" class="tree-container"></div>
+        
+        <div id="messageHistory" class="message-history">
+            <p>MÔ PHỎNG CÂY AVL!</p>
         </div>
-
-        <div class="tree-container" id="tree-container"></div>
     </div>
-<footer>
-    <p class="source">Design by <a href= " https://github.com/hiltd2758">Hil</p>
-</footer>
-    <script src="script.js">
-
-        </script>
+    
+    <script src="script.js"></script>
 </body>
 </html>
