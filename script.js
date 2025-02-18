@@ -32,7 +32,6 @@ class AVLTree {
         }
     }
 
-/******  f6d93813-a81e-4196-8d19-265dbe7a3a24  *******/
     getHeight(node) {
         return node ? node.height : 0;
     }
