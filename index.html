@@ -3,52 +3,109 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AVL</title>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <title>MÔ PHỎNG CÂY AVL</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div class="container">
-        <h1>MÔ PHỎNG CÂY AVL</h1>
-        
-        <div class="controls">
-            <div class="input-group">
-                <input type="number" id="nodeValue" placeholder="Giá trị">
-                <button onclick="addNode()">Thêm nút</button>
-                <button onclick="deleteNode()">Xóa nút</button>
-                <button onclick="searchNode()">Tìm kiếm</button>
+        <header class="app-header">
+            <h1>MÔ PHỎNG CÂY AVL</h1>
+            <p>Mô phỏng quá trình của các thao tác trên cây AVL và các phép duyệt nhoe ^^</p>
+            <button class="toggle-theme" id="toggleTheme">
+                <i class="fas fa-moon"></i>
+            </button>
+        </header>
+
+        <div class="control-panel">
+            <div class="panel-section">
+                <div class="section-title">Thao tác với nút</div>
+                <div class="control-group">
+                    <div class="input-wrapper">
+                        <input type="number" id="nodeValue" placeholder="Giá trị" min="-50" max="999">
+                    </div>
+                    <button class="btn btn-success" onclick="addNode()">
+                        <i class="fas fa-plus-circle"></i> Thêm nút
+                    </button>
+                    <button class="btn btn-danger" onclick="deleteNode()">
+                        <i class="fas fa-trash-alt"></i> Xóa nút
+                    </button>
+                    <button class="btn btn-primary" onclick="searchNode()">
+                        <i class="fas fa-search"></i> Tìm kiếm
+                    </button>
+                </div>
             </div>
-            
-            <div class="traverse-buttons">
-                <button onclick="inOrderTraversal()">In-order</button>
-                <button onclick="preOrderTraversal()">Pre-order</button>
-                <button onclick="postOrderTraversal()">Post-order</button>
+
+            <div class="panel-section">
+                <div class="section-title">Duyệt cây</div>
+                <div class="traverse-buttons">
+                    <button class="btn btn-secondary" onclick="inOrder()">
+                        <i class="fas fa-exchange-alt"></i> In-order
+                    </button>
+                    <button class="btn btn-secondary" onclick="preOrderTraversal()">
+                        <i class="fas fa-level-down-alt"></i> Pre-order
+                    </button>
+                    <button class="btn btn-secondary" onclick="postOrderTraversal()">
+                        <i class="fas fa-level-up-alt"></i> Post-order
+                    </button>
+                </div>
             </div>
-            
-            <div class="speed-control">
-                <label for="speed">Tốc độ hiệu ứng:</label>
-                <input 
-                    type="range" 
-                    id="speed" 
-                    class="speed-slider" 
-                    min="300" 
-                    max="2700" 
-                    step="300" 
-                    value="1500"
-                    oninput="setAnimationSpeed(this.value)">
-                <span id="speedValue">1.5x</span>
+
+            <div class="panel-section">
+                <div class="section-title">Cài đặt hiệu ứng</div>
+                <div class="speed-control">
+                    <div class="speed-label">
+                        <i class="fas fa-tachometer-alt"></i> Tốc độ hiệu ứng:
+                    </div>
+                    <div class="speed-slider-container">
+                        <input 
+                            type="range" 
+                            id="speed" 
+                            class="speed-slider" 
+                            min="300" 
+                            max="2700" 
+                            step="300" 
+                            value="1500"
+                            oninput="setAnimationSpeed(this.value)">
+                        <span id="speedValue" class="speed-value">1.5x</span>
+                    </div>
+                    <button class="btn btn-warning" onclick="resetTree()">
+                        <i class="fas fa-redo-alt"></i> Xóa cây
+                    </button>
+                </div>
             </div>
-            
-            <button class="reset-button" onclick="resetTree()">Xóa cây</button>
         </div>
-        
-        <div id="tree-container" class="tree-container"></div>
-        
-        <div id="messageHistory" class="message-history">
-            <p>MÔ PHỎNG CÂY AVL!</p>
+
+        <div class="visualization-container">
+            <div id="tree-container" class="tree-container"></div>
+        </div>
+
+        <div class="legend">
+            <div class="legend-item">
+                <div class="legend-color legend-normal"></div>
+                <span>Nút thường</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color legend-highlight"></div>
+                <span>Nút đang xử lý</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color legend-search"></div>
+                <span>Đường dẫn tìm kiếm</span>
+            </div>
+        </div>
+
+        <div class="message-panel">
+            <div class="message-header">
+                <i class="fas fa-history"></i>
+                <h3>Lịch sử thao tác</h3>
+            </div>
+            <div id="messageHistory" class="message-body">
+                <div class="message">Chào mừng đến với MÔ PHỎNG CÂY AVL!</div>
+            </div>
         </div>
     </div>
-    
     <script src="script.js"></script>
 </body>
 </html>

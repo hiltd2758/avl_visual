@@ -1,3 +1,25 @@
+const toggleThemeBtn = document.getElementById('toggleTheme');
+        const themeIcon = toggleThemeBtn.querySelector('i');
+        
+        toggleThemeBtn.addEventListener('click', () => {
+            document.body.classList.toggle('dark-theme');
+            if (document.body.classList.contains('dark-theme')) {
+                themeIcon.classList.remove('fa-moon');
+                themeIcon.classList.add('fa-sun');
+            } else {
+                themeIcon.classList.remove('fa-sun');
+                themeIcon.classList.add('fa-moon');
+            }
+        });
+        
+
+        function setAnimationSpeed(value) {
+            const speedValue = document.getElementById('speedValue');
+            const speed = (3000 - value) / 1000;
+            speedValue.textContent = speed.toFixed(1) + 'x';
+           
+        }
+
 class TreeNode {
     constructor(value) {
         this.value = value;
