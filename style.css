@@ -17,7 +17,9 @@
     margin: 0;
     padding: 0;
 }
-
+html{
+    overscroll-behavior: none;
+}
 body {
     font-family: 'Montserrat', sans-serif;
     background: linear-gradient(135deg, #f5f7fa 0%, #e4eaef 100%);
@@ -25,6 +27,7 @@ body {
     min-height: 100vh;
     padding: 20px;
     line-height: 1.6;
+    
     margin: 0;
     padding:0;
 }
