@@ -29,7 +29,7 @@ class TreeNode {
         this.x = 0;
         this.y = 0;
         this.isHighlighted = false;
-        this.balance = 0; // Track balance factor
+        this.balance = 0;
     }
 }
 
@@ -41,7 +41,7 @@ class AVLTree {
         this.messages = [];
         this.animationDelay = 1000;
         this.nodeRadius = 25;
-        this.searchPath = []; // Track nodes visited during search
+        this.searchPath = []; 
     }
     
     addMessage(message) {
@@ -65,7 +65,7 @@ class AVLTree {
 
     updateHeight(node) {
         node.height = 1 + Math.max(this.getHeight(node.left), this.getHeight(node.right));
-        node.balance = this.getBalance(node); // Update balance factor
+        node.balance = this.getBalance(node); // cap nhat balance
     }
 
     getBalance(node) {
@@ -108,7 +108,7 @@ class AVLTree {
         this.updateHeight(node);
         const balance = this.getBalance(node);
 
-        // Trường hợp xoay đơn
+        // lech tt pp
         if (balance > 1 && value < node.left.value) {
             this.addMessage(`Phát hiện lệch trái-trái tại nút ${node.value}. Thực hiện xoay phải tại nút ${node.value}.`);
             node.isHighlighted = true;
@@ -125,7 +125,7 @@ class AVLTree {
             return this.rotateLeft(node);
         }
 
-        // Trường hợp xoay kép
+        //tp pt
         if (balance > 1 && value > node.left.value) {
             this.addMessage(`Phát hiện lệch trái-phải tại nút ${node.value}. Thực hiện xoay kép LR.`);
             this.addMessage(`B1. Xoay trái tại nút ${node.left.value}.`);
@@ -203,7 +203,6 @@ class AVLTree {
         this.updateHeight(node);
         const balance = this.getBalance(node);
 
-        // Xử lý tái cân bằng sau khi xóa
         if (balance > 1 && this.getBalance(node.left) >= 0) {
             node.isHighlighted = true;
             this.addMessage(`Phát hiện mất cân bằng sau khi xóa. Thực hiện xoay phải tại nút ${node.value}`);
@@ -283,17 +282,15 @@ class AVLTree {
         return y;
     }
 
-    // Tính toán vị trí các nút cải tiến
     async renderTree(container) {
         if (!container) return;
         
         container.innerHTML = '';
         
-        // Tính toán chiều rộng dựa trên kích thước cây
         const treeHeight = this.getHeight(this.root);
         const widestLevel = Math.pow(2, treeHeight - 1);
         const containerWidth = container.offsetWidth;
-        const screenRatio = 0.8; // Sử dụng 80% chiều rộng màn hình
+        const screenRatio = 0.8;
         
         const requiredWidth = widestLevel * this.nodeRadius * 3;
         const scale = containerWidth > requiredWidth ? 1 : (containerWidth * screenRatio / requiredWidth);
@@ -302,14 +299,13 @@ class AVLTree {
         await this.drawNodes(this.root, container);
     }
 
-    // Cải tiến thuật toán vị trí nút để cây không bị chồng chéo
     async positionNodes(node, x, y, spacing) {
         if (!node) return;
 
         node.x = x;
         node.y = y;
 
-        // Tính toán khoảng cách dựa trên chiều cao của cây con
+        // tính khoảng cách bằng chiều cao của cây con
         const leftHeight = this.getHeight(node.left);
         const rightHeight = this.getHeight(node.right);
         const scaleFactor = Math.max(leftHeight, rightHeight) * 0.5 + 1;
@@ -321,7 +317,7 @@ class AVLTree {
     async drawNodes(node, container) {
         if (!node) return;
 
-        // Vẽ đường nối
+        // vẽ đường nối nút
         if (node.left) {
             const branch = document.createElement('div');
             branch.className = 'branch';
@@ -336,23 +332,23 @@ class AVLTree {
             container.appendChild(branch);
         }
 
-        // Vẽ nút
+        //ve nut
         const nodeElem = document.createElement('div');
         nodeElem.className = `node${node.isHighlighted ? ' highlight' : ''}${this.searchPath.includes(node) ? ' search-path' : ''}`;
         
-        // Tạo nội dung hiển thị thêm chiều cao và hệ số cân bằng
+        //tao them noi dung hien thi chieu cao
         const nodeContent = document.createElement('div');
         nodeContent.className = 'node-content';
         nodeContent.textContent = node.value;
         nodeElem.appendChild(nodeContent);
         
-        // Thêm chỉ số chiều cao
+        // chỉ số h
         const heightBadge = document.createElement('div');
         heightBadge.className = 'badge height-badge';
         heightBadge.textContent = `h:${node.height}`;
         nodeElem.appendChild(heightBadge);
         
-        // Thêm hệ số cân bằng
+        // hệ số balacne
         const balanceBadge = document.createElement('div');
         balanceBadge.className = 'badge balance-badge';
         balanceBadge.textContent = `b:${node.balance}`;
@@ -378,7 +374,7 @@ class AVLTree {
         branch.style.transform = `rotate(${angle}deg)`;
     }
 
-    // Thêm chức năng tìm kiếm
+    //tim kiem nut
     async search(value) {
         this.clearHighlights();
         this.searchPath = [];
@@ -414,7 +410,7 @@ class AVLTree {
         }
     }
     
-    // Thêm các phép duyệt cây
+    //cac phep duyet cay
     async inOrder() {
         this.clearHighlights();
         const result = [];

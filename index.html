@@ -59,13 +59,13 @@
                         <i class="fas fa-tachometer-alt"></i> Tốc độ hiệu ứng:
                     </div>
                     <div class="speed-slider-container">
-                        <input 
-                            type="range" 
-                            id="speed" 
-                            class="speed-slider" 
-                            min="300" 
-                            max="2700" 
-                            step="300" 
+                        <input
+                            type="range"
+                            id="speed"
+                            class="speed-slider"
+                            min="300"
+                            max="2700"
+                            step="300"
                             value="1500"
                             oninput="setAnimationSpeed(this.value)">
                         <span id="speedValue" class="speed-value">1.5x</span>
@@ -110,19 +110,18 @@
     <footer class="app-footer">
         <div class="footer-container">
             <div class="footer-section about">
-                <h3><i class="fas fa-tree"></i> Về AVL Tree</h3>
-                <p>Cây AVL là cây tìm kiếm nhị phân tự cân bằng với độ phức tạp O(log n) cho các thao tác cơ bản.</p>
+                <h3 class="footer-title"><i class="fas fa-tree"></i> Về AVL Tree</h3>
+                <p>Cây <strong>AVL</strong> là cây tìm kiếm nhị phân tự cân bằng với độ phức tạp <strong>O(log n)</strong> cho các thao tác cơ bản.</p>
                 <div class="social-links">
-                    <a href="#" class="social-icon"><i class="fab fa-github"></i></a>
-                    <a href="#" class="social-icon"><i class="fab fa-facebook"></i></a>
-                    <a href="#" class="social-icon"><i class="fab fa-twitter"></i></a>
-                    <a href="#" class="social-icon"><i class="fab fa-linkedin"></i></a>
+                    <a href="https://www.github.com/hiltd2758" class="github" target="_blank"><i class="fab fa-github"></i></a>
+                    <a href="https://www.facebook.com/hiltd05" class="facebook" target="_blank"><i class="fab fa-facebook"></i></a>
+                    <a href="https://www.instagram.com/hilyh_woqq/" class="instagram" target="_blank"><i class="fab fa-instagram"></i></a>
                 </div>
             </div>
             
             <div class="footer-section features">
-                <h3><i class="fas fa-code-branch"></i> Tính Năng</h3>
-                <ul>
+                <h3 class="footer-title"><i class="fas fa-code-branch"></i> Tính Năng</h3>
+                <ul class="feature-list">
                     <li><i class="fas fa-plus-circle"></i> Thêm nút</li>
                     <li><i class="fas fa-trash-alt"></i> Xóa nút</li>
                     <li><i class="fas fa-search"></i> Tìm kiếm</li>
@@ -131,19 +130,28 @@
             </div>
             
             <div class="footer-section resources">
-                <h3><i class="fas fa-book"></i> Tài Nguyên</h3>
-                <ul>
-                    <li><a href="avl-visual/resources/guide.html"><i class="fas fa-graduation-cap"></i> Hướng dẫn sử dụng</a></li>
-                    <li><a href="../resources/theory.html"><i class="fas fa-book-open"></i> Lý thuyết cây AVL</a></li>
-                    <li><a href="../resources/faq.html"><i class="fas fa-question-circle"></i> FAQ</a></li>
-                    <li><a href="../resources/source-code.html"><i class="fas fa-code"></i> Mã nguồn</a></li>
+                <h3 class="footer-title"><i class="fas fa-book"></i> Tài Nguyên</h3>
+                <ul class="resource-list">
+                    <li>
+                        <a href="https://learnersbucket.com/tutorials/data-structures/avl-tree-in-javascript/" target="_blank">
+                            <i class="fas fa-book-open"></i> Lý thuyết AVL
+                        </a>
+                    </li>
+                    <li>
+                        <a href="https://github.com/hiltd2758/avl_visual" target="_blank">
+                            <i class="fas fa-code"></i> Source Code
+                        </a>
+                    </li>
                 </ul>
             </div>
         </div>
         
         <div class="footer-bottom">
+
             <div class="copyright">
-                <p>&copy; 2025 MÔ PHỎNG CÂY AVL | Designed by <span class="highlight"><a href="https://github.com/hiltd2758" target="_blank">HilDepTrai 🗣️</a></span></p>
+                <p>&copy; 2025 MÔ PHỎNG CÂY AVL | Designed by <span class="highlight">
+                    <a href="https://github.com/hiltd2758" target="_blank">HilDepTrai 🗣️</a></span>
+                </p>
             </div>
             <div class="version-info">
                 <span><i class="fas fa-code-branch"></i> Phiên bản 1.0.0</span>
@@ -151,7 +159,6 @@
             </div>
         </div>
     </footer>
-
     <script src="script.js"></script>
 </body>
 </html>
