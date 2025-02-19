@@ -502,7 +502,6 @@ body.dark-theme .speed-label {
     color: #ced4da;
 }
 
-/* Responsive styles */
 @media (max-width: 992px) {
     .control-group {
         flex-direction: column;
@@ -550,6 +549,18 @@ body.dark-theme .speed-label {
         flex-direction: column;
         gap: 10px;
     }
+    .footer-container {
+        flex-direction: column;
+    }
+    
+    .footer-section {
+        margin-bottom: 30px;
+    }
+    
+    .footer-bottom {
+        flex-direction: column;
+        gap: 15px;
+    }
 }
 
 @media (max-width: 576px) {
@@ -581,4 +592,193 @@ body.dark-theme .speed-label {
     .tree-container {
         height: 350px;
     }
+}
+
+/* footer */
+
+.app-footer {
+    background: linear-gradient(135deg, #1a2a3a 0%, #0d1b2a 100%);
+    color: #e0e0e0;
+    border-top: 3px solid #3498db;
+    margin-top: 40px;
+    font-family: 'Roboto', sans-serif;
+    box-shadow: 0 -5px 15px rgba(0, 0, 0, 0.1);
+    border-radius: 10px 10px 0 0;
+    overflow: hidden;
+}
+
+.footer-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 40px 20px 30px;
+}
+
+.footer-section {
+    flex: 1;
+    min-width: 250px;
+    margin: 0 15px 20px;
+}
+
+.footer-section h3 {
+    color: #3498db;
+    font-size: 1.4rem;
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+    position: relative;
+    padding-bottom: 10px;
+}
+
+.footer-section h3::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 50px;
+    height: 3px;
+    background: #3498db;
+    border-radius: 2px;
+}
+
+.footer-section h3 i {
+    margin-right: 10px;
+    color: #3498db;
+}
+.footer-bottom a{
+    text-decoration: none;
+    color:#3498db;
+}
+.footer-bottom a:hover{
+    text-decoration: underline;
+}
+.footer-section p {
+    line-height: 1.6;
+    color: #bbb;
+    margin-bottom: 20px;
+}
+
+.footer-section ul {
+    list-style: none;
+    padding: 0;
+}
+
+.footer-section ul li {
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    transition: transform 0.2s;
+}
+
+.footer-section ul li:hover {
+    transform: translateX(5px);
+}
+
+.footer-section ul li i {
+    color: #3498db;
+    margin-right: 10px;
+    font-size: 0.9rem;
+}
+
+.footer-section ul li a {
+    color: #bbb;
+    text-decoration: none;
+    transition: color 0.3s;
+    display: flex;
+    align-items: center;
+}
+
+.footer-section ul li a:hover {
+    color: #3498db;
+}
+
+.social-links {
+    display: flex;
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.social-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.1);
+    color: #e0e0e0;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    font-size: 1.2rem;
+}
+
+.social-icon:hover {
+    background: #3498db;
+    color: #fff;
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(52, 152, 219, 0.4);
+}
+
+.footer-bottom {
+    background: rgba(0, 0, 0, 0.2);
+    padding: 15px 0;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    text-align: center;
+}
+
+.copyright {
+    padding: 0 20px;
+}
+
+.copyright p {
+    font-size: 0.9rem;
+}
+
+.copyright .highlight {
+    color: #3498db;
+    font-weight: 600;
+}
+
+.version-info {
+    display: flex;
+    gap: 20px;
+    padding: 0 20px;
+    color: #999;
+    font-size: 0.9rem;
+}
+
+.version-info span {
+    display: flex;
+    align-items: center;
+}
+
+.version-info i {
+    margin-right: 7px;
+    color: #3498db;
+}
+
+.dark-theme .app-footer {
+    background: linear-gradient(135deg, #0a192f 0%, #051937 100%);
+    border-top-color: #2980b9;
+}
+
+.dark-theme .footer-section h3,
+.dark-theme .footer-section ul li i,
+.dark-theme .copyright .highlight,
+.dark-theme .version-info i,
+.dark-theme .footer-section h3 i {
+    color: #2980b9;
+}
+
+.dark-theme .social-icon:hover {
+    background: #2980b9;
+}
+
+.dark-theme .footer-section h3::after {
+    background: #2980b9;
 }
