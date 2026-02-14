@@ -1,25 +1,4 @@
-const toggleThemeBtn = document.getElementById('toggleTheme');
-const themeIcon = toggleThemeBtn.querySelector('i');
-
-toggleThemeBtn.addEventListener('click', () => {
-    document.body.classList.toggle('dark-theme');
-    if (document.body.classList.contains('dark-theme')) {
-        themeIcon.classList.remove('fa-moon');
-        themeIcon.classList.add('fa-sun');
-    } else {
-        themeIcon.classList.remove('fa-sun');
-        themeIcon.classList.add('fa-moon');
-    }
-});
-
-
-function setAnimationSpeed(value) {
-    const speedValue = document.getElementById('speedValue');
-    const speed = (3000 - value) / 1000;
-    speedValue.textContent = speed.toFixed(1) + 'x';
-
-}
-
+// ===== TREE NODE CLASS =====
 class TreeNode {
     constructor(value) {
         this.value = value;
@@ -33,29 +12,32 @@ class TreeNode {
     }
 }
 
+// ===== AVL TREE CLASS =====
 class AVLTree {
     constructor() {
         this.root = null;
-        this.levelSpacing = 120;
+        this.levelSpacing = 100;
         this.horizontalSpacing = 50;
         this.messages = [];
         this.animationDelay = 1000;
-        this.nodeRadius = 25;
+        this.nodeRadius = 26;
         this.searchPath = [];
     }
 
     addMessage(message) {
         this.messages.unshift(message);
-        if (this.messages.length > 10) {
+        if (this.messages.length > 20) {
             this.messages.pop();
         }
         this.updateMessages();
     }
 
     updateMessages() {
-        const messageHistory = document.getElementById('messageHistory');
-        if (messageHistory) {
-            messageHistory.innerHTML = this.messages.map(msg => `<p>${msg}</p>`).join('');
+        const logArea = document.getElementById('logArea');
+        if (logArea) {
+            logArea.innerHTML = this.messages
+                .map(msg => `<div class="log-entry">${msg}</div>`)
+                .join('');
         }
     }
 
@@ -65,7 +47,7 @@ class AVLTree {
 
     updateHeight(node) {
         node.height = 1 + Math.max(this.getHeight(node.left), this.getHeight(node.right));
-        node.balance = this.getBalance(node); // cap nhat balance
+        node.balance = this.getBalance(node);
     }
 
     getBalance(node) {
@@ -75,7 +57,8 @@ class AVLTree {
     async insert(value) {
         this.clearHighlights();
         this.root = await this._insert(this.root, value);
-        await this.renderTree(document.getElementById('tree-container'));
+        await this.renderTree();
+        this.updateTreeInfo();
     }
 
     clearHighlights() {
@@ -92,7 +75,7 @@ class AVLTree {
 
     async _insert(node, value) {
         if (!node) {
-            this.addMessage(`Thêm nút mới với giá trị ${value}`);
+            this.addMessage(`Thêm nút ${value}`);
             return new TreeNode(value);
         }
 
@@ -101,58 +84,56 @@ class AVLTree {
         } else if (value > node.value) {
             node.right = await this._insert(node.right, value);
         } else {
-            this.addMessage(`Giá trị ${value} đã tồn tại trong cây`);
+            this.addMessage(`Giá trị ${value} đã tồn tại`);
             return node;
         }
 
         this.updateHeight(node);
         const balance = this.getBalance(node);
 
-        // lech tt pp
+        // Left-Left
         if (balance > 1 && value < node.left.value) {
-            this.addMessage(`Phát hiện lệch trái-trái tại nút ${node.value}. Thực hiện xoay phải tại nút ${node.value}.`);
+            this.addMessage(`Lệch trái-trái tại ${node.value}, xoay phải`);
             node.isHighlighted = true;
-            await this.renderTree(document.getElementById('tree-container'));
+            await this.renderTree();
             await this.delay();
             return this.rotateRight(node);
         }
 
+        // Right-Right
         if (balance < -1 && value > node.right.value) {
-            this.addMessage(`Phát hiện lệch phải-phải tại nút ${node.value}. Thực hiện xoay trái tại nút ${node.value}.`);
+            this.addMessage(`Lệch phải-phải tại ${node.value}, xoay trái`);
             node.isHighlighted = true;
-            await this.renderTree(document.getElementById('tree-container'));
+            await this.renderTree();
             await this.delay();
             return this.rotateLeft(node);
         }
 
-        //tp pt
+        // Left-Right
         if (balance > 1 && value > node.left.value) {
-            this.addMessage(`Phát hiện lệch trái-phải tại nút ${node.value}. Thực hiện xoay kép LR.`);
-            this.addMessage(`B1. Xoay trái tại nút ${node.left.value}.`);
+            this.addMessage(`Lệch trái-phải tại ${node.value}, xoay kép LR`);
             node.isHighlighted = true;
-            await this.renderTree(document.getElementById('tree-container'));
+            await this.renderTree();
             await this.delay();
 
             node.left = this.rotateLeft(node.left);
-            await this.renderTree(document.getElementById('tree-container'));
+            await this.renderTree();
             await this.delay();
 
-            this.addMessage(`B2. Xoay phải tại nút ${node.value}`);
             return this.rotateRight(node);
         }
 
+        // Right-Left
         if (balance < -1 && value < node.right.value) {
-            this.addMessage(`Phát hiện lệch phải-trái tại nút ${node.value}. Thực hiện xoay kép RL.`);
-            this.addMessage(`B1. Quay phải tại nút ${node.right.value}.`);
+            this.addMessage(`Lệch phải-trái tại ${node.value}, xoay kép RL`);
             node.isHighlighted = true;
-            await this.renderTree(document.getElementById('tree-container'));
+            await this.renderTree();
             await this.delay();
 
             node.right = this.rotateRight(node.right);
-            await this.renderTree(document.getElementById('tree-container'));
+            await this.renderTree();
             await this.delay();
 
-            this.addMessage(`B2. Quay trái tại nút ${node.value}.`);
             return this.rotateLeft(node);
         }
 
@@ -166,12 +147,13 @@ class AVLTree {
     async delete(value) {
         this.clearHighlights();
         this.root = await this._delete(this.root, value);
-        await this.renderTree(document.getElementById('tree-container'));
+        await this.renderTree();
+        this.updateTreeInfo();
     }
 
     async _delete(node, value) {
         if (!node) {
-            this.addMessage(`Không tìm thấy nút ${value} để xóa`);
+            this.addMessage(`Không tìm thấy ${value}`);
             return null;
         }
 
@@ -180,19 +162,16 @@ class AVLTree {
         } else if (value > node.value) {
             node.right = await this._delete(node.right, value);
         } else {
-            this.addMessage(`Đã tìm thấy nút ${value} để xóa`);
+            this.addMessage(`Xóa nút ${value}`);
             node.isHighlighted = true;
-            await this.renderTree(document.getElementById('tree-container'));
+            await this.renderTree();
             await this.delay();
 
-            if (!node.left) {
-                return node.right;
-            } else if (!node.right) {
-                return node.left;
-            }
+            if (!node.left) return node.right;
+            if (!node.right) return node.left;
 
             const minNode = this.getMinNode(node.right);
-            this.addMessage(`Thay thế nút ${node.value} bằng nút nhỏ nhất bên phải: ${minNode.value}`);
+            this.addMessage(`Thay ${node.value} bằng ${minNode.value}`);
 
             node.value = minNode.value;
             node.right = await this._delete(node.right, minNode.value);
@@ -204,42 +183,42 @@ class AVLTree {
         const balance = this.getBalance(node);
 
         if (balance > 1 && this.getBalance(node.left) >= 0) {
+            this.addMessage(`Cân bằng lại tại ${node.value}, xoay phải`);
             node.isHighlighted = true;
-            this.addMessage(`Phát hiện mất cân bằng sau khi xóa. Thực hiện xoay phải tại nút ${node.value}`);
-            await this.renderTree(document.getElementById('tree-container'));
+            await this.renderTree();
             await this.delay();
             return this.rotateRight(node);
         }
 
         if (balance > 1 && this.getBalance(node.left) < 0) {
+            this.addMessage(`Cân bằng lại tại ${node.value}, xoay kép LR`);
             node.isHighlighted = true;
-            this.addMessage(`Phát hiện mất cân bằng LR sau khi xóa. Thực hiện xoay kép LR tại nút ${node.value}`);
-            await this.renderTree(document.getElementById('tree-container'));
+            await this.renderTree();
             await this.delay();
 
             node.left = this.rotateLeft(node.left);
-            await this.renderTree(document.getElementById('tree-container'));
+            await this.renderTree();
             await this.delay();
 
             return this.rotateRight(node);
         }
 
         if (balance < -1 && this.getBalance(node.right) <= 0) {
+            this.addMessage(`Cân bằng lại tại ${node.value}, xoay trái`);
             node.isHighlighted = true;
-            this.addMessage(`Phát hiện mất cân bằng sau khi xóa. Thực hiện xoay trái tại nút ${node.value}`);
-            await this.renderTree(document.getElementById('tree-container'));
+            await this.renderTree();
             await this.delay();
             return this.rotateLeft(node);
         }
 
         if (balance < -1 && this.getBalance(node.right) > 0) {
+            this.addMessage(`Cân bằng lại tại ${node.value}, xoay kép RL`);
             node.isHighlighted = true;
-            this.addMessage(`Phát hiện mất cân bằng RL sau khi xóa. Thực hiện xoay kép RL tại nút ${node.value}`);
-            await this.renderTree(document.getElementById('tree-container'));
+            await this.renderTree();
             await this.delay();
 
             node.right = this.rotateRight(node.right);
-            await this.renderTree(document.getElementById('tree-container'));
+            await this.renderTree();
             await this.delay();
 
             return this.rotateLeft(node);
@@ -250,9 +229,7 @@ class AVLTree {
 
     getMinNode(node) {
         let current = node;
-        while (current.left) {
-            current = current.left;
-        }
+        while (current.left) current = current.left;
         return current;
     }
 
@@ -282,28 +259,28 @@ class AVLTree {
         return y;
     }
 
-    async renderTree(container) {
+    async renderTree() {
+        const container = document.getElementById('treeContainer');
         if (!container) return;
 
         container.innerHTML = '';
 
-        // Use a dynamic layout approach
-        // 1. Calculate relative positions (centered at 0)
-        // Spacing factor depends on horizontalSpacing
+        const emptyState = document.getElementById('emptyState');
+        if (!this.root) {
+            emptyState.classList.remove('hidden');
+            return;
+        }
+        emptyState.classList.add('hidden');
+
         this.calculateNodePositions(this.root, 0, 60);
 
-        // 2. Find bounds to center and ensure positive coordinates
         const bounds = this.getTreeBounds(this.root);
         const padding = 50;
 
-        // If tree is empty or just root, handle gracefully
         let shiftX = padding;
         if (bounds.minX < 0) {
             shiftX = Math.abs(bounds.minX) + padding;
         } else if (bounds.minX >= 0 && this.root) {
-            shiftX = padding;
-
-            // Optional: Center in view if tree is smaller than container
             const containerWidth = container.offsetWidth;
             const treeWidth = bounds.maxX - bounds.minX;
             if (treeWidth < containerWidth - 2 * padding) {
@@ -311,9 +288,7 @@ class AVLTree {
             }
         }
 
-        // 3. Shift all nodes
         this.shiftTree(this.root, shiftX);
-
         await this.drawNodes(this.root, container);
     }
 
@@ -324,9 +299,6 @@ class AVLTree {
         node.y = y;
 
         const h = node.height;
-        // height 1 = leaf. height 2 = node with leaves.
-        // For height h, we need optimal spacing. 
-        // Heuristic: 2^(h-2) * baseSpacing
         let spacing = this.horizontalSpacing;
         if (h > 1) {
             spacing = this.horizontalSpacing * Math.pow(2, h - 2);
@@ -362,7 +334,7 @@ class AVLTree {
     async drawNodes(node, container) {
         if (!node) return;
 
-        // vẽ đường nối nút
+        // Draw branches
         if (node.left) {
             const branch = document.createElement('div');
             branch.className = 'branch';
@@ -377,23 +349,20 @@ class AVLTree {
             container.appendChild(branch);
         }
 
-        //ve nut
+        // Draw node
         const nodeElem = document.createElement('div');
         nodeElem.className = `node${node.isHighlighted ? ' highlight' : ''}${this.searchPath.includes(node) ? ' search-path' : ''}`;
 
-        //tao them noi dung hien thi chieu cao
         const nodeContent = document.createElement('div');
         nodeContent.className = 'node-content';
         nodeContent.textContent = node.value;
         nodeElem.appendChild(nodeContent);
 
-        // chỉ số h
         const heightBadge = document.createElement('div');
         heightBadge.className = 'badge height-badge';
         heightBadge.textContent = `h:${node.height}`;
         nodeElem.appendChild(heightBadge);
 
-        // hệ số balacne
         const balanceBadge = document.createElement('div');
         balanceBadge.className = 'badge balance-badge';
         balanceBadge.textContent = `b:${node.balance}`;
@@ -419,18 +388,17 @@ class AVLTree {
         branch.style.transform = `rotate(${angle}deg)`;
     }
 
-    //tim kiem nut
     async search(value) {
         this.clearHighlights();
         this.searchPath = [];
         const found = await this._search(this.root, value);
 
-        await this.renderTree(document.getElementById('tree-container'));
+        await this.renderTree();
 
         if (found) {
-            this.addMessage(`Đã tìm thấy giá trị ${value}`);
+            this.addMessage(`Tìm thấy ${value}`);
         } else {
-            this.addMessage(`Không tìm thấy giá trị ${value}`);
+            this.addMessage(`Không tìm thấy ${value}`);
         }
 
         return found;
@@ -440,7 +408,7 @@ class AVLTree {
         if (!node) return false;
 
         this.searchPath.push(node);
-        await this.renderTree(document.getElementById('tree-container'));
+        await this.renderTree();
         await this.delay();
 
         if (node.value === value) {
@@ -455,12 +423,11 @@ class AVLTree {
         }
     }
 
-    //cac phep duyet cay
     async inOrder() {
         this.clearHighlights();
         const result = [];
         await this._inOrder(this.root, result);
-        this.addMessage(`Duyệt In-order: ${result.join(' -> ')}`);
+        this.addMessage(`In-order: ${result.join(', ')}`);
     }
 
     async _inOrder(node, result) {
@@ -470,7 +437,7 @@ class AVLTree {
 
         node.isHighlighted = true;
         result.push(node.value);
-        await this.renderTree(document.getElementById('tree-container'));
+        await this.renderTree();
         await this.delay();
         node.isHighlighted = false;
 
@@ -481,7 +448,7 @@ class AVLTree {
         this.clearHighlights();
         const result = [];
         await this._preOrderTraversal(this.root, result);
-        this.addMessage(`Duyệt Pre-order: ${result.join(' -> ')}`);
+        this.addMessage(`Pre-order: ${result.join(', ')}`);
     }
 
     async _preOrderTraversal(node, result) {
@@ -489,7 +456,7 @@ class AVLTree {
 
         node.isHighlighted = true;
         result.push(node.value);
-        await this.renderTree(document.getElementById('tree-container'));
+        await this.renderTree();
         await this.delay();
         node.isHighlighted = false;
 
@@ -501,7 +468,7 @@ class AVLTree {
         this.clearHighlights();
         const result = [];
         await this._postOrderTraversal(this.root, result);
-        this.addMessage(`Duyệt Post-order: ${result.join(' -> ')}`);
+        this.addMessage(`Post-order: ${result.join(', ')}`);
     }
 
     async _postOrderTraversal(node, result) {
@@ -512,20 +479,37 @@ class AVLTree {
 
         node.isHighlighted = true;
         result.push(node.value);
-        await this.renderTree(document.getElementById('tree-container'));
+        await this.renderTree();
         await this.delay();
         node.isHighlighted = false;
     }
+
+    updateTreeInfo() {
+        const nodeCount = this.countNodes(this.root);
+        const treeHeight = this.getHeight(this.root);
+
+        document.getElementById('nodeCount').textContent = `${nodeCount} nút`;
+        document.getElementById('treeHeight').textContent = `Chiều cao ${treeHeight}`;
+    }
+
+    countNodes(node) {
+        if (!node) return 0;
+        return 1 + this.countNodes(node.left) + this.countNodes(node.right);
+    }
 }
 
+// ===== INITIALIZE =====
 const avl = new AVLTree();
 
+// ===== EVENT HANDLERS =====
 async function addNode() {
     const input = document.getElementById('nodeValue');
     const value = parseInt(input.value);
-    if (!isNaN(value)) {
+    if (!isNaN(value) && value >= 0 && value <= 999) {
         await avl.insert(value);
         input.value = '';
+    } else if (input.value) {
+        avl.addMessage('Giá trị không hợp lệ (0-999)');
     }
 }
 
@@ -535,6 +519,8 @@ async function deleteNode() {
     if (!isNaN(value)) {
         await avl.delete(value);
         input.value = '';
+    } else if (input.value) {
+        avl.addMessage('Nhập giá trị để xóa');
     }
 }
 
@@ -543,18 +529,32 @@ async function searchNode() {
     const value = parseInt(input.value);
     if (!isNaN(value)) {
         await avl.search(value);
+    } else if (input.value) {
+        avl.addMessage('Nhập giá trị để tìm');
     }
 }
 
 async function inOrder() {
+    if (!avl.root) {
+        avl.addMessage('Cây rỗng');
+        return;
+    }
     await avl.inOrder();
 }
 
 async function preOrderTraversal() {
+    if (!avl.root) {
+        avl.addMessage('Cây rỗng');
+        return;
+    }
     await avl.preOrderTraversal();
 }
 
 async function postOrderTraversal() {
+    if (!avl.root) {
+        avl.addMessage('Cây rỗng');
+        return;
+    }
     await avl.postOrderTraversal();
 }
 
@@ -562,27 +562,42 @@ function resetTree() {
     avl.root = null;
     avl.messages = [];
     avl.addMessage('Đã xóa toàn bộ cây');
-    avl.renderTree(document.getElementById('tree-container'));
+    avl.renderTree();
+    avl.updateTreeInfo();
 }
 
 function setAnimationSpeed(value) {
     avl.animationDelay = 3000 - value;
-    document.getElementById('speedValue').textContent = `${value / 30}x`;
+    const speed = (3000 - value) / 1000;
+    document.getElementById('speedLabel').textContent = `${speed.toFixed(1)}x`;
 }
 
-document.getElementById('nodeValue').addEventListener('keypress', async function (event) {
+function togglePanel() {
+    const panel = document.getElementById('sidePanel');
+    const canvasArea = document.querySelector('.canvas-area');
+    const toggleText = document.getElementById('panelToggleText');
+
+    panel.classList.toggle('open');
+    canvasArea.classList.toggle('panel-open');
+
+    if (panel.classList.contains('open')) {
+        toggleText.textContent = 'Ẩn bảng điều khiển';
+    } else {
+        toggleText.textContent = 'Hiện bảng điều khiển';
+    }
+}
+
+// ===== KEYBOARD SHORTCUTS =====
+document.getElementById('nodeValue').addEventListener('keypress', async function(event) {
     if (event.key === 'Enter') {
         await addNode();
     }
 });
 
-// Drag to scroll functionality
-const treeContainer = document.getElementById('tree-container');
+// ===== DRAG TO SCROLL =====
+const treeContainer = document.getElementById('treeContainer');
 let isDown = false;
-let startX;
-let scrollLeft;
-let startY;
-let scrollTop;
+let startX, startY, scrollLeft, scrollTop;
 
 treeContainer.addEventListener('mousedown', (e) => {
     isDown = true;
@@ -615,3 +630,5 @@ treeContainer.addEventListener('mousemove', (e) => {
     treeContainer.scrollTop = scrollTop - walkY;
 });
 
+// ===== INITIALIZE UI =====
+avl.updateTreeInfo();

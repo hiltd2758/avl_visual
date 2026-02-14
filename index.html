@@ -1,166 +1,120 @@
 <!DOCTYPE html>
 <html lang="vi">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MÔ PHỎNG CÂY AVL</title>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap"
-        rel="stylesheet">
+    <title>AVL Tree Visualizer</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
-
 <body>
-    <div class="container">
-        <header class="app-header">
-            <h1>MÔ PHỎNG CÂY AVL</h1>
-            <p>Mô phỏng quá trình của các thao tác trên cây AVL và các phép duyệt nhoe ^^</p>
-            <button class="toggle-theme" id="toggleTheme">
-                <i class="fas fa-moon"></i>
-            </button>
+    <div class="app">
+        <!-- Header with inline controls -->
+        <header class="header">
+            <div class="header-container">
+                <h1 class="app-title">AVL Tree</h1>
+                
+                <div class="controls">
+                    <div class="input-wrapper">
+                        <input 
+                            type="number" 
+                            id="nodeValue" 
+                            class="node-input" 
+                            placeholder="Nhập giá trị"
+                            min="0"
+                            max="999"
+                        >
+                    </div>
+                    
+                    <button class="btn btn-primary" onclick="addNode()">Thêm</button>
+                    <button class="btn btn-secondary" onclick="deleteNode()">Xóa</button>
+                    <button class="btn btn-secondary" onclick="searchNode()">Tìm</button>
+                    <button class="btn btn-tertiary" onclick="resetTree()">Xóa cây</button>
+                    
+                    <div class="divider"></div>
+                    
+                    <button class="btn btn-ghost" onclick="togglePanel()">
+                        <span id="panelToggleText">Hiện bảng điều khiển</span>
+                    </button>
+                </div>
+            </div>
         </header>
 
-        <div class="control-panel">
-            <div class="panel-section">
-                <div class="section-title">Thao tác với nút</div>
-                <div class="control-group">
-                    <div class="input-wrapper">
-                        <input type="number" id="nodeValue" placeholder="Giá trị" min="-50" max="999">
-                    </div>
-                    <button class="btn btn-success" onclick="addNode()">
-                        <i class="fas fa-plus-circle"></i> Thêm nút
-                    </button>
-                    <button class="btn btn-danger" onclick="deleteNode()">
-                        <i class="fas fa-trash-alt"></i> Xóa nút
-                    </button>
-                    <button class="btn btn-primary" onclick="searchNode()">
-                        <i class="fas fa-search"></i> Tìm kiếm
-                    </button>
+        <!-- Main content area -->
+        <main class="main">
+            <!-- Tree canvas -->
+            <div class="canvas-area">
+                <div class="tree-info">
+                    <span id="nodeCount">0 nút</span>
+                    <span class="separator">•</span>
+                    <span id="treeHeight">Chiều cao 0</span>
+                </div>
+                
+                <div id="treeContainer" class="tree-canvas"></div>
+                
+                <div class="empty-state" id="emptyState">
+                    <p>Bắt đầu bằng cách thêm một nút</p>
                 </div>
             </div>
 
-            <div class="panel-section">
-                <div class="section-title">Duyệt cây</div>
-                <div class="traverse-buttons">
-                    <button class="btn btn-secondary" onclick="inOrder()">
-                        <i class="fas fa-exchange-alt"></i> In-order
-                    </button>
-                    <button class="btn btn-secondary" onclick="preOrderTraversal()">
-                        <i class="fas fa-level-down-alt"></i> Pre-order
-                    </button>
-                    <button class="btn btn-secondary" onclick="postOrderTraversal()">
-                        <i class="fas fa-level-up-alt"></i> Post-order
-                    </button>
-                </div>
-            </div>
-
-            <div class="panel-section">
-                <div class="section-title">Cài đặt hiệu ứng</div>
-                <div class="speed-control">
-                    <div class="speed-label">
-                        <i class="fas fa-tachometer-alt"></i> Tốc độ hiệu ứng:
+            <!-- Collapsible side panel -->
+            <aside class="panel" id="sidePanel">
+                <div class="panel-content">
+                    <div class="panel-section">
+                        <h3 class="panel-heading">Duyệt cây</h3>
+                        <div class="button-group">
+                            <button class="btn-minimal" onclick="inOrder()">In-order</button>
+                            <button class="btn-minimal" onclick="preOrderTraversal()">Pre-order</button>
+                            <button class="btn-minimal" onclick="postOrderTraversal()">Post-order</button>
+                        </div>
                     </div>
-                    <div class="speed-slider-container">
-                        <input type="range" id="speed" class="speed-slider" min="300" max="2700" step="300" value="1500"
-                            oninput="setAnimationSpeed(this.value)">
-                        <span id="speedValue" class="speed-value">1.5x</span>
+
+                    <div class="panel-section">
+                        <h3 class="panel-heading">Tốc độ</h3>
+                        <div class="speed-control">
+                            <input 
+                                type="range" 
+                                id="speedSlider" 
+                                class="slider" 
+                                min="300" 
+                                max="2700" 
+                                step="300" 
+                                value="1500"
+                                oninput="setAnimationSpeed(this.value)"
+                            >
+                            <span id="speedLabel" class="speed-label">1.5x</span>
+                        </div>
                     </div>
-                    <button class="btn btn-warning" onclick="resetTree()">
-                        <i class="fas fa-redo-alt"></i> Xóa cây
-                    </button>
+
+                    <div class="panel-section">
+                        <h3 class="panel-heading">Lịch sử</h3>
+                        <div id="logArea" class="log-area">
+                            <div class="log-entry">Chào mừng đến với AVL Tree Visualizer</div>
+                        </div>
+                    </div>
+
+                    <div class="panel-section">
+                        <h3 class="panel-heading">Chú thích</h3>
+                        <div class="legend">
+                            <div class="legend-row">
+                                <div class="legend-circle default"></div>
+                                <span>Nút thường</span>
+                            </div>
+                            <div class="legend-row">
+                                <div class="legend-circle active"></div>
+                                <span>Đang xử lý</span>
+                            </div>
+                            <div class="legend-row">
+                                <div class="legend-circle search"></div>
+                                <span>Tìm kiếm</span>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-            </div>
-        </div>
-
-        <div class="visualization-container">
-            <div id="tree-container" class="tree-container"></div>
-        </div>
-
-        <div class="legend">
-            <div class="legend-item">
-                <div class="legend-color legend-normal"></div>
-                <span>Nút thường</span>
-            </div>
-            <div class="legend-item">
-                <div class="legend-color legend-highlight"></div>
-                <span>Nút đang xử lý</span>
-            </div>
-            <div class="legend-item">
-                <div class="legend-color legend-search"></div>
-                <span>Đường dẫn tìm kiếm</span>
-            </div>
-        </div>
-
-        <div class="message-panel">
-            <div class="message-header">
-                <i class="fas fa-history"></i>
-                <h3>Lịch sử thao tác</h3>
-            </div>
-            <div id="messageHistory" class="message-body">
-                <div class="message">Chào mừng đến với MÔ PHỎNG CÂY AVL!</div>
-            </div>
-        </div>
+            </aside>
+        </main>
     </div>
 
-    <footer class="app-footer">
-        <div class="footer-container">
-            <div class="footer-section about">
-                <h3 class="footer-title"><i class="fas fa-tree"></i> Về AVL Tree</h3>
-                <p>Cây <strong>AVL</strong> là cây tìm kiếm nhị phân tự cân bằng với độ phức tạp <strong>O(log
-                        n)</strong> cho các thao tác cơ bản.</p>
-                <div class="social-links">
-                    <a href="https://www.github.com/hiltd2758" class="github" target="_blank"><i
-                            class="fab fa-github"></i></a>
-                    <a href="https://www.facebook.com/hiltd05" class="facebook" target="_blank"><i
-                            class="fab fa-facebook"></i></a>
-                    <a href="https://www.instagram.com/hilyh_woqq/" class="instagram" target="_blank"><i
-                            class="fab fa-instagram"></i></a>
-                </div>
-            </div>
-
-            <div class="footer-section features">
-                <h3 class="footer-title"><i class="fas fa-code-branch"></i> Tính Năng</h3>
-                <ul class="feature-list">
-                    <li><i class="fas fa-plus-circle"></i> Thêm nút</li>
-                    <li><i class="fas fa-trash-alt"></i> Xóa nút</li>
-                    <li><i class="fas fa-search"></i> Tìm kiếm</li>
-                    <li><i class="fas fa-exchange-alt"></i> Các phép duyệt</li>
-                </ul>
-            </div>
-
-            <div class="footer-section resources">
-                <h3 class="footer-title"><i class="fas fa-book"></i> Tài Nguyên</h3>
-                <ul class="resource-list">
-                    <li>
-                        <a href="https://learnersbucket.com/tutorials/data-structures/avl-tree-in-javascript/"
-                            target="_blank">
-                            <i class="fas fa-book-open"></i> Lý thuyết về AVL Tree
-                        </a>
-                    </li>
-                    <li>
-                        <a href="https://github.com/hiltd2758/avl_visual" target="_blank">
-                            <i class="fas fa-code"></i> Source Code
-                        </a>
-                    </li>
-                </ul>
-            </div>
-        </div>
-
-        <div class="footer-bottom">
-
-            <div class="copyright">
-                <p>&copy; 2025 MÔ PHỎNG CÂY AVL | Designed by <span class="highlight">
-                        <a href="https://github.com/hiltd2758" target="_blank">HilDepTrai 🗣️</a></span>
-                </p>
-            </div>
-            <div class="version-info">
-                <span><i class="fas fa-code-branch"></i> Phiên bản 1.0.0</span>
-                <span><i class="fas falendar-alt"></i> Cập nhật: 19/02/2025</span>
-            </div>
-        </div>
-    </footer>
     <script src="script.js"></script>
 </body>
-
 </html>
